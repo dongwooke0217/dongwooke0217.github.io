@@ -1,0 +1,955 @@
+/* ========================================================
+   1. 기본 초기화 및 글로벌 스타일
+   ======================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
+  padding: 40px 20px 80px;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ========================================================
+   2. 갤러리 필터 제어 (Pure CSS Radio Hack)
+   ======================================================== */
+.filter-input {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #64748b;
+  margin-bottom: 28px;
+}
+
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #64748b;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9999px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.chk-icon {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+
+.filter-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+/* 필터 버튼 활성화 */
+#filter-all:checked~.header .filter-all-btn,
+#filter-nature:checked~.header .filter-nature-btn,
+#filter-architecture:checked~.header .filter-architecture-btn,
+#filter-travel:checked~.header .filter-travel-btn {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+#filter-all:checked~.header .filter-all-btn .chk-icon,
+#filter-nature:checked~.header .filter-nature-btn .chk-icon,
+#filter-architecture:checked~.header .filter-architecture-btn .chk-icon,
+#filter-travel:checked~.header .filter-travel-btn .chk-icon {
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
+
+#filter-all:checked~.header .filter-all-btn .chk-icon::after,
+#filter-nature:checked~.header .filter-nature-btn .chk-icon::after,
+#filter-architecture:checked~.header .filter-architecture-btn .chk-icon::after,
+#filter-travel:checked~.header .filter-travel-btn .chk-icon::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  width: 4px;
+  height: 8px;
+  border: solid #2563eb;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ========================================================
+   3. 갤러리 그리드 레이아웃 (4열 x 5행 = 20개)
+   ======================================================== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.gallery-item {
+  display: none;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#filter-all:checked~.gallery-grid .gallery-item {
+  display: block;
+  animation: cardFadeIn 0.35s ease forwards;
+}
+
+#filter-nature:checked~.gallery-grid .gallery-item.nature {
+  display: block;
+  animation: cardFadeIn 0.35s ease forwards;
+}
+
+#filter-architecture:checked~.gallery-grid .gallery-item.architecture {
+  display: block;
+  animation: cardFadeIn 0.35s ease forwards;
+}
+
+#filter-travel:checked~.gallery-grid .gallery-item.travel {
+  display: block;
+  animation: cardFadeIn 0.35s ease forwards;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  height: 100%;
+}
+
+.gallery-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  padding-top: 75%;
+  overflow: hidden;
+}
+
+.card-inner img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.gallery-item:hover .card-inner img {
+  transform: scale(1.08);
+}
+
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 16px 14px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.gallery-item.nature .badge,
+.nature-badge {
+  background-color: rgba(34, 197, 94, 0.9);
+}
+
+.gallery-item.architecture .badge,
+.architecture-badge {
+  background-color: rgba(59, 130, 246, 0.9);
+}
+
+.gallery-item.travel .badge,
+.travel-badge {
+  background-color: rgba(249, 115, 22, 0.9);
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.click-hint {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.25s ease;
+}
+
+.gallery-item:hover .click-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================================================
+   4. 순수 CSS 모달 (Modal :target)
+   ======================================================== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s;
+}
+
+.modal:target {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: 10;
+  max-width: 720px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal:target .modal-dialog {
+  transform: scale(1) translateY(0);
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  z-index: 20;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.5rem;
+  line-height: 36px;
+  text-align: center;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.modal-close:hover {
+  background-color: rgba(0, 0, 0, 0.85);
+  transform: rotate(90deg);
+}
+
+.modal-image-wrap {
+  width: 100%;
+  height: 380px;
+  overflow: hidden;
+  background-color: #000000;
+}
+
+.modal-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-info {
+  padding: 24px 28px;
+}
+
+.modal-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 8px 0 10px;
+}
+
+.modal-desc {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.65;
+}
+
+
+/* ========================================================
+   5. 🍣 사시미 이상형 월드컵 섹션 (Pure CSS State Machine)
+   ======================================================== */
+.worldcup-section {
+  margin-top: 90px;
+  padding-top: 60px;
+  border-top: 2px dashed #cbd5e1;
+}
+
+.worldcup-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.worldcup-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #f43f5e, #fb7185);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(244, 63, 94, 0.3);
+}
+
+.worldcup-main-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.worldcup-sub {
+  font-size: 1.05rem;
+  color: #64748b;
+}
+
+/* 월드컵 상태 제어 인풋 (시각적 숨김) */
+.wc-input {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 공통 스테이지 레이아웃 */
+.worldcup-container {
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.wc-stage {
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.stage-info {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.round-pill {
+  display: inline-block;
+  background-color: #0f172a;
+  color: #38bdf8;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.final-pill {
+  background: linear-gradient(135deg, #d97706, #fbbf24);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+}
+
+.round-guide {
+  font-size: 1rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* 배틀 아레나 (2개 카드 맞대결) */
+.battle-arena {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
+}
+
+/* 사시미 카드 (Label) */
+.sashimi-card {
+  flex: 1;
+  max-width: 420px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 3px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sashimi-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: #f43f5e;
+  box-shadow: 0 20px 35px rgba(244, 63, 94, 0.18);
+}
+
+.sashimi-thumb {
+  position: relative;
+  width: 100%;
+  padding-top: 68%;
+  overflow: hidden;
+  background-color: #000000;
+}
+
+.sashimi-thumb img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.sashimi-card:hover .sashimi-thumb img {
+  transform: scale(1.07);
+}
+
+.select-btn-badge {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background-color: rgba(244, 63, 94, 0.92);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.sashimi-card:hover .select-btn-badge {
+  background-color: #e11d48;
+  transform: scale(1.05);
+}
+
+.winner-pick {
+  background: linear-gradient(135deg, #d97706, #fbbf24);
+}
+
+.sashimi-meta {
+  padding: 20px 24px 24px;
+}
+
+.taste-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e11d48;
+  background-color: #ffe4e6;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.sashimi-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.sashimi-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* 중앙 VS 배지 */
+.vs-badge {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4);
+  flex-shrink: 0;
+  animation: pulseVS 2s infinite ease-in-out;
+}
+
+.gold-vs {
+  background: linear-gradient(135deg, #d97706, #fbbf24);
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.45);
+}
+
+@keyframes pulseVS {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 결승전 슬롯 레이아웃 */
+.final-slot {
+  flex: 1;
+  max-width: 420px;
+  display: flex;
+}
+
+.final-card {
+  display: none;
+  width: 100%;
+}
+
+
+/* ========================================================
+   6. 이상형 월드컵 상태 전이 로직 (CSS State Rules)
+   ======================================================== */
+
+/* [기본 상태]
+   1경기는 표시, 2경기/결승/우승은 숨김 */
+.stage-match1 {
+  display: flex;
+}
+
+.stage-match2 {
+  display: none;
+}
+
+.stage-final {
+  display: none;
+}
+
+.stage-champion {
+  display: none;
+}
+
+/* 1경기 승자 선택 시 -> 1경기 숨기고 2경기 오픈 */
+#m1-salmon:checked~.stage-match1,
+#m1-tuna:checked~.stage-match1 {
+  display: none;
+}
+
+#m1-salmon:checked~.stage-match2,
+#m1-tuna:checked~.stage-match2 {
+  display: flex;
+  animation: slideFadeIn 0.4s ease forwards;
+}
+
+/* 2경기 승자 선택 시 -> 2경기 숨김 */
+#m2-flounder:checked~.stage-match2,
+#m2-platter:checked~.stage-match2 {
+  display: none;
+}
+
+/* 1경기와 2경기가 모두 완료되었을 때 -> 결승전(Final Match) 오픈 */
+#m1-salmon:checked~#m2-flounder:checked~.stage-final,
+#m1-salmon:checked~#m2-platter:checked~.stage-final,
+#m1-tuna:checked~#m2-flounder:checked~.stage-final,
+#m1-tuna:checked~#m2-platter:checked~.stage-final {
+  display: flex;
+  animation: slideFadeIn 0.45s ease forwards;
+}
+
+/* 결승전 좌측 카드 (1경기 승자 결정 반영) */
+.final-salmon-card,
+.final-tuna-card {
+  display: none;
+}
+
+#m1-salmon:checked~.stage-final .final-salmon-card {
+  display: flex;
+}
+
+#m1-tuna:checked~.stage-final .final-tuna-card {
+  display: flex;
+}
+
+/* 결승전 우측 카드 (2경기 승자 결정 반영) */
+.final-flounder-card,
+.final-platter-card {
+  display: none;
+}
+
+#m2-flounder:checked~.stage-final .final-flounder-card {
+  display: flex;
+}
+
+#m2-platter:checked~.stage-final .final-platter-card {
+  display: flex;
+}
+
+/* 결승전 승자 선택 시 -> 결승전 숨김 및 챔피언 화면 오픈 */
+#final-salmon:checked~.stage-final,
+#final-tuna:checked~.stage-final,
+#final-flounder:checked~.stage-final,
+#final-platter:checked~.stage-final {
+  display: none;
+}
+
+#final-salmon:checked~.stage-champion,
+#final-tuna:checked~.stage-champion,
+#final-flounder:checked~.stage-champion,
+#final-platter:checked~.stage-champion {
+  display: flex;
+  animation: popWinner 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+
+/* ========================================================
+   7. 👑 최종 우승 챔피언 화면 스타일
+   ======================================================== */
+.champion-box {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 44px 32px 38px;
+  text-align: center;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+  border: 4px solid #fbbf24;
+}
+
+.crown-icon {
+  font-size: 3.5rem;
+  margin-bottom: 6px;
+  animation: bounceCrown 1.5s infinite ease;
+}
+
+@keyframes bounceCrown {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.champion-label {
+  display: inline-block;
+  background: #fbbf24;
+  color: #78350f;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.champion-congrats {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 24px;
+}
+
+/* 우승 카드 (기본 숨김, 우승자만 표시) */
+.champion-card {
+  display: none;
+  background-color: #f8fafc;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 28px;
+  border: 1.5px solid #e2e8f0;
+}
+
+#final-salmon:checked~.stage-champion .champion-salmon {
+  display: block;
+}
+
+#final-tuna:checked~.stage-champion .champion-tuna {
+  display: block;
+}
+
+#final-flounder:checked~.stage-champion .champion-flounder {
+  display: block;
+}
+
+#final-platter:checked~.stage-champion .champion-platter {
+  display: block;
+}
+
+.champ-img-wrap {
+  width: 100%;
+  height: 250px;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.champ-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.champ-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.champ-desc {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* 순수 HTML Reset 버튼 (토너먼트 다시 시작) */
+.btn-restart {
+  background: linear-gradient(135deg, #0f172a, #334155);
+  color: #ffffff;
+  border: none;
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.25);
+  transition: all 0.25s ease;
+}
+
+.btn-restart:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
+}
+
+.icon-refresh {
+  font-size: 1.2rem;
+  transition: transform 0.4s ease;
+}
+
+.btn-restart:hover .icon-refresh {
+  transform: rotate(180deg);
+}
+
+/* 등장 애니메이션 */
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes popWinner {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* ========================================================
+   8. 반응형 미디어 쿼리
+   ======================================================== */
+@media (max-width: 1100px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .title,
+  .worldcup-main-title {
+    font-size: 1.8rem;
+  }
+
+  .modal-image-wrap {
+    height: 260px;
+  }
+
+  .modal-info {
+    padding: 18px 20px;
+  }
+
+  /* 배틀 아레나 모바일 대응: 세로 배치 */
+  .battle-arena {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .vs-badge {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+    margin: -8px 0;
+    z-index: 5;
+  }
+
+  .sashimi-card,
+  .final-slot {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .champion-box {
+    padding: 30px 20px;
+  }
+
+  .champ-img-wrap {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-buttons {
+    gap: 8px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .modal-image-wrap {
+    height: 200px;
+  }
+}
